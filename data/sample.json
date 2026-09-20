@@ -1,0 +1,9 @@
+{
+  "event_id": "sample-003-001",
+  "event_type": "OBJECT_PACKED",
+  "aggregate_type": "collection_object",
+  "aggregate_id": "museum_loan_custody-001",
+  "occurred_at": "2026-09-20T18:00:00+08:00",
+  "version": 1,
+  "summary": "登记跨馆木雕借展护送台的首条领域记录"
+}
