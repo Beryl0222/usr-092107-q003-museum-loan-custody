@@ -1,0 +1,11 @@
+{
+  "event_type": "CONDITION_SIGNED",
+  "aggregate_type": "condition_report",
+  "description": "签署状况报告；签署后该站状况冻结，之后的变化只能体现在新报告中。",
+  "payload_required": ["report_id", "signed_by", "signed_at"],
+  "payload_fields": {
+    "report_id": "报告编号",
+    "signed_by": "签署人 actor id",
+    "signed_at": "签署时间"
+  }
+}

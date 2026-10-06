@@ -1,0 +1,12 @@
+{
+  "event_type": "RISK_RESOLVED",
+  "aggregate_type": "risk_assessment",
+  "description": "风险研判结论；decided_by 必须是借展协议登记的 decision_makers 之一。",
+  "payload_required": ["risk_id", "decision", "rationale", "decided_by"],
+  "payload_fields": {
+    "risk_id": "风险编号",
+    "decision": "dismissed / monitor / deinstall / superseded_by_backfill",
+    "rationale": "研判理由",
+    "decided_by": "研判人 actor id"
+  }
+}

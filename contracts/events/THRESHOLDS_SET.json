@@ -1,0 +1,10 @@
+{
+  "event_type": "THRESHOLDS_SET",
+  "aggregate_type": "loan_agreement",
+  "description": "设定环境阈值；超阈值只生成待研判风险，不直接构成事故。",
+  "payload_required": ["loan_id", "rules"],
+  "payload_fields": {
+    "loan_id": "借展编号",
+    "rules": "阈值规则数组：[{ metric, min?, max?, unit, scope_object_ids? }]，metric 如 temperature / humidity / shock / light"
+  }
+}

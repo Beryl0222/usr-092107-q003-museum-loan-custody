@@ -1,0 +1,10 @@
+{
+  "event_type": "FINDING_RECORDED",
+  "aggregate_type": "condition_report",
+  "description": "向未签署的报告补充新发现；已签署报告拒绝补充，只能另立新报告。",
+  "payload_required": ["report_id", "finding"],
+  "payload_fields": {
+    "report_id": "报告编号",
+    "finding": "{ finding_id, part, description, severity, is_new }"
+  }
+}

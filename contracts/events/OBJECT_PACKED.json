@@ -1,0 +1,13 @@
+{
+  "event_type": "OBJECT_PACKED",
+  "aggregate_type": "collection_object",
+  "description": "藏品装入箱件，建立藏品到包装层级的归属。",
+  "payload_required": ["object_id", "case_id", "packed_by"],
+  "payload_fields": {
+    "object_id": "藏品编号",
+    "case_id": "箱件编号",
+    "packed_by": "装箱人 actor id",
+    "slot_id": "可选，箱内囊位",
+    "materials": "可选，包装材料数组，如 无酸纸 / 定制囊匣"
+  }
+}

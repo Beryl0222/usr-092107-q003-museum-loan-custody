@@ -1,0 +1,11 @@
+{
+  "event_type": "EXCEPTION_CLOSED",
+  "aggregate_type": "exception_case",
+  "description": "异常闭合；存在未补齐的双人确认或未研判风险时拒绝闭合。",
+  "payload_required": ["exception_id", "resolution", "closed_by"],
+  "payload_fields": {
+    "exception_id": "异常编号",
+    "resolution": "处置结论",
+    "closed_by": "闭合人 actor id"
+  }
+}

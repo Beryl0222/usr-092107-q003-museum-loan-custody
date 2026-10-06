@@ -1,0 +1,15 @@
+{
+  "event_type": "EMERGENCY_MOVED",
+  "aggregate_type": "exception_case",
+  "description": "紧急转移：先保护实物，单人即可记录，双人确认后续补齐。",
+  "payload_required": ["exception_id", "object_ids", "from_location", "to_location", "reason", "moved_by"],
+  "payload_fields": {
+    "exception_id": "所属异常编号",
+    "object_ids": "转移藏品数组",
+    "from_location": "原位置",
+    "to_location": "保护性位置",
+    "reason": "转移原因",
+    "moved_by": "执行人 actor id",
+    "confirmation_status": "固定为 PENDING，待 EMERGENCY_CONFIRMED 补齐"
+  }
+}

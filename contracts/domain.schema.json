@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "跨馆木雕借展护送台领域事件",
+  "description": "跨机构交换的最小约定：信封字段为必填，payload 的逐事件字段见 contracts/events/ 目录。记录一经接收，event_id、occurred_at、version 不得原地改写，更正以新的后继事件表达。",
   "type": "object",
   "required": [
     "event_id",
@@ -19,20 +20,49 @@
     "event_type": {
       "type": "string",
       "enum": [
+        "LOAN_REGISTERED",
+        "OBJECT_REGISTERED",
+        "THRESHOLDS_SET",
+        "INSURANCE_BOUND",
+        "LICENSE_GRANTED",
         "OBJECT_PACKED",
+        "CASE_ASSEMBLED",
+        "CASE_SPLIT",
+        "CASE_RECOMBINED",
         "CUSTODY_TRANSFERRED",
         "CONDITION_INSPECTED",
+        "FINDING_RECORDED",
+        "CONDITION_SIGNED",
+        "READING_INGESTED",
         "EXCURSION_REPORTED",
+        "RISK_RAISED",
+        "RISK_RESOLVED",
+        "DEINSTALL_ORDERED",
+        "EXCEPTION_OPENED",
+        "EMERGENCY_MOVED",
+        "EMERGENCY_CONFIRMED",
+        "EXCEPTION_CLOSED",
+        "DISPLAY_ROTATED",
+        "MEDIA_USAGE_LOGGED",
         "RETURN_ACCEPTED"
       ]
     },
     "aggregate_type": {
       "type": "string",
       "enum": [
+        "loan_agreement",
         "collection_object",
         "shipping_case",
         "custody_handoff",
-        "condition_incident"
+        "condition_report",
+        "condition_incident",
+        "environment_sensor",
+        "environment_excursion",
+        "risk_assessment",
+        "exception_case",
+        "insurance_policy",
+        "media_license",
+        "display_slot"
       ]
     },
     "aggregate_id": {
@@ -41,15 +71,45 @@
     },
     "occurred_at": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "description": "事件发生时间，可带任意时区偏移；接收方归一化为 UTC 后排序与判重。"
     },
     "version": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 1,
+      "description": "同一聚合流内从 1 开始严格递增。"
     },
     "summary": {
       "type": "string",
       "minLength": 1
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "接收方落账时间；断网补报时晚于 occurred_at。"
+    },
+    "loan_id": {
+      "type": "string",
+      "description": "所属借展，便于跨机构按借展检索。"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "org": { "type": "string" }
+      }
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "调用方幂等键；重复上传同一交接单或补报批次时据此去重。"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object",
+      "description": "逐事件字段，见 contracts/events/<EVENT_TYPE>.json。"
     }
   },
   "additionalProperties": true

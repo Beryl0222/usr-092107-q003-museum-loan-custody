@@ -1,0 +1,17 @@
+{
+  "event_type": "LOAN_REGISTERED",
+  "aggregate_type": "loan_agreement",
+  "description": "借展协议登记，确立出借方、承借方、藏品清单与有权决定撤展的文保人员。",
+  "payload_required": ["loan_id", "lender_org", "borrower_org", "object_ids", "period", "venue", "decision_makers"],
+  "payload_fields": {
+    "loan_id": "借展编号",
+    "lender_org": "出借机构，如 jixi-museum",
+    "borrower_org": "承借机构，如 shandong-museum",
+    "object_ids": "藏品编号数组",
+    "period": "{ start, end } 借展期",
+    "venue": "展出地点",
+    "decision_makers": "有权研判风险与决定撤展的文保人员 actor id 数组",
+    "insurance_policy_id": "可选，保险单编号",
+    "license_ids": "可选，许可编号数组"
+  }
+}

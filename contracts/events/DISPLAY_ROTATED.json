@@ -1,0 +1,14 @@
+{
+  "event_type": "DISPLAY_ROTATED",
+  "aggregate_type": "display_slot",
+  "description": "展位轮换；须落在许可范围（藏品在许可清单内且允许 display），已撤展藏品拒绝轮换。",
+  "payload_required": ["object_id", "loan_id", "to_slot", "license_id"],
+  "payload_fields": {
+    "object_id": "藏品编号",
+    "loan_id": "借展编号",
+    "to_slot": "目标展位",
+    "license_id": "依据的许可编号",
+    "from_slot": "可选，原展位",
+    "reason": "可选，轮换原因"
+  }
+}

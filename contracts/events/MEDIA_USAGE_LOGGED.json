@@ -1,0 +1,14 @@
+{
+  "event_type": "MEDIA_USAGE_LOGGED",
+  "aggregate_type": "media_license",
+  "description": "图文视频使用登记；用途须为许可允许的用途。",
+  "payload_required": ["usage_id", "license_id", "object_ids", "use_type", "operator_id"],
+  "payload_fields": {
+    "usage_id": "使用记录编号",
+    "license_id": "许可编号",
+    "object_ids": "涉及藏品数组",
+    "use_type": "photo / video / publication",
+    "operator_id": "操作人 actor id",
+    "purpose": "可选，用途说明"
+  }
+}

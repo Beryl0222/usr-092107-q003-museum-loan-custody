@@ -1,0 +1,17 @@
+{
+  "event_type": "INSURANCE_BOUND",
+  "aggregate_type": "insurance_policy",
+  "description": "保险范围登记；保额与保费属商业敏感信息，按角色脱敏。",
+  "payload_required": ["policy_id", "loan_id", "insurer", "covered_object_ids", "coverage", "period"],
+  "payload_fields": {
+    "policy_id": "保险单编号",
+    "loan_id": "借展编号",
+    "insurer": "承保方",
+    "covered_object_ids": "承保藏品数组",
+    "coverage": "承保范围数组，如 transit / exhibition / theft / water_damage",
+    "period": "{ start, end } 保险期间",
+    "amount": "可选，保额（敏感）",
+    "currency": "可选，币种",
+    "premium": "可选，保费（敏感）"
+  }
+}

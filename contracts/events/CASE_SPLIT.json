@@ -1,0 +1,11 @@
+{
+  "event_type": "CASE_SPLIT",
+  "aggregate_type": "shipping_case",
+  "description": "箱件拆分；拆分前后内容必须恰好划分，保证每件藏品可追到具体箱件。",
+  "payload_required": ["case_id", "into", "reason"],
+  "payload_fields": {
+    "case_id": "被拆分的箱件编号",
+    "into": "子箱数组：[{ case_id, object_ids }]，其并集须等于原内容且互不重叠",
+    "reason": "拆分原因"
+  }
+}

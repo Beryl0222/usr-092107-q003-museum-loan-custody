@@ -1,0 +1,14 @@
+{
+  "event_type": "CASE_ASSEMBLED",
+  "aggregate_type": "shipping_case",
+  "description": "箱件组配，可表达外包装箱、内箱、囊位的层级。",
+  "payload_required": ["case_id", "loan_id", "case_type", "object_ids"],
+  "payload_fields": {
+    "case_id": "箱件编号",
+    "loan_id": "借展编号",
+    "case_type": "outer / inner / slot",
+    "object_ids": "初始内容藏品数组，可为空",
+    "parent_case_id": "可选，父箱件编号",
+    "sealed": "可选，是否铅封"
+  }
+}

@@ -5,5 +5,11 @@
   "aggregate_id": "museum_loan_custody-001",
   "occurred_at": "2026-09-20T18:00:00+08:00",
   "version": 1,
-  "summary": "登记跨馆木雕借展护送台的首条领域记录"
+  "summary": "登记跨馆木雕借展护送台的首条领域记录",
+  "payload": {
+    "object_id": "museum_loan_custody-001",
+    "case_id": "case-demo-001",
+    "packed_by": "wen-01",
+    "materials": ["无酸纸", "定制囊匣"]
+  }
 }

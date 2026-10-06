@@ -1,0 +1,11 @@
+{
+  "event_type": "EMERGENCY_CONFIRMED",
+  "aggregate_type": "exception_case",
+  "description": "紧急转移双人确认补齐；两名确认人须为不同文保人员，且至少一人不是转移执行人。",
+  "payload_required": ["exception_id", "confirmer_ids", "confirmed_at"],
+  "payload_fields": {
+    "exception_id": "所属异常编号",
+    "confirmer_ids": "两名确认人 actor id 数组",
+    "confirmed_at": "确认时间"
+  }
+}

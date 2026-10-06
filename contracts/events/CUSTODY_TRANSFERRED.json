@@ -1,0 +1,17 @@
+{
+  "event_type": "CUSTODY_TRANSFERRED",
+  "aggregate_type": "custody_handoff",
+  "description": "承运交接：交接双方各至少一名签署人；同一交接单重复上传按 idempotency_key 去重。",
+  "payload_required": ["handoff_id", "loan_id", "from_org", "to_org", "object_ids", "case_ids", "location", "signatures"],
+  "payload_fields": {
+    "handoff_id": "交接单编号",
+    "loan_id": "借展编号",
+    "from_org": "交出方机构",
+    "to_org": "接收方机构",
+    "object_ids": "交接藏品数组",
+    "case_ids": "交接箱件数组",
+    "location": "交接地点",
+    "signatures": "签署数组：[{ signer_id, signer_org, role, signed_at }]，须覆盖交接双方",
+    "condition_report_ids": "可选，随附状况报告编号数组"
+  }
+}

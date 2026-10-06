@@ -1,0 +1,12 @@
+{
+  "event_type": "DEINSTALL_ORDERED",
+  "aggregate_type": "collection_object",
+  "description": "撤展决定；只能由有权限的文保人员作出，系统不因超阈值自动撤展。",
+  "payload_required": ["object_id", "reason", "ordered_by"],
+  "payload_fields": {
+    "object_id": "藏品编号",
+    "reason": "撤展原因",
+    "ordered_by": "决定人 actor id",
+    "risk_id": "可选，关联风险编号"
+  }
+}

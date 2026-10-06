@@ -1,0 +1,15 @@
+{
+  "event_type": "RETURN_ACCEPTED",
+  "aggregate_type": "custody_handoff",
+  "description": "返还验收：对照历史基线与各站签署状况；存在新发现差异时自动立案异常。",
+  "payload_required": ["handoff_id", "loan_id", "object_ids", "condition_report_ids", "discrepancies", "accepted_by"],
+  "payload_fields": {
+    "handoff_id": "返还交接单编号",
+    "loan_id": "借展编号",
+    "object_ids": "验收藏品数组",
+    "condition_report_ids": "验收依据的已签署报告编号数组",
+    "discrepancies": "差异数组：[{ object_id, finding_id?, description }]，可为空数组",
+    "accepted_by": "验收人 actor id",
+    "opened_exception_id": "可选，因差异自动立案的异常编号"
+  }
+}

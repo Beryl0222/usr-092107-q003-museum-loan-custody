@@ -1,0 +1,15 @@
+{
+  "event_type": "RISK_RAISED",
+  "aggregate_type": "risk_assessment",
+  "description": "超阈值仅生成待研判风险；是否构成事故、是否撤展由有权限的文保人员研判。",
+  "payload_required": ["risk_id", "loan_id", "basis", "status"],
+  "payload_fields": {
+    "risk_id": "风险编号",
+    "loan_id": "借展编号",
+    "basis": "依据说明，如关联的 excursion_key",
+    "status": "固定为 PENDING",
+    "excursion_key": "可选，来源超阈值窗口",
+    "object_ids": "可选，涉及藏品数组",
+    "case_ids": "可选，涉及箱件数组"
+  }
+}

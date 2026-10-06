@@ -1,0 +1,16 @@
+{
+  "event_type": "OBJECT_REGISTERED",
+  "aggregate_type": "collection_object",
+  "description": "藏品身份与历史状况基线登记；历史状况一经登记只能以后继检查补充，不得改写。",
+  "payload_required": ["object_id", "loan_id", "name", "category", "historical_condition"],
+  "payload_fields": {
+    "object_id": "藏品编号",
+    "loan_id": "借展编号",
+    "name": "藏品名称，如 徽州木雕·人物故事窗栏板",
+    "category": "类别，如 徽州木雕",
+    "historical_condition": "历史状况数组：[{ part, description, severity }]，含旧修补痕迹",
+    "dimensions": "可选，尺寸",
+    "weight_kg": "可选，重量",
+    "fragile_points": "可选，脆弱部位数组"
+  }
+}

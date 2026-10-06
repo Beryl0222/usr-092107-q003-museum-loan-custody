@@ -1,0 +1,12 @@
+{
+  "event_type": "CASE_RECOMBINED",
+  "aggregate_type": "shipping_case",
+  "description": "箱件重新组合；目标箱内容须等于来源箱内容之并集。",
+  "payload_required": ["case_id", "from_case_ids", "object_ids"],
+  "payload_fields": {
+    "case_id": "目标箱件编号",
+    "from_case_ids": "来源箱件编号数组",
+    "object_ids": "合并后的内容藏品数组",
+    "reason": "可选，重组原因"
+  }
+}

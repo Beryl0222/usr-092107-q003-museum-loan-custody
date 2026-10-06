@@ -1,0 +1,15 @@
+{
+  "event_type": "CONDITION_INSPECTED",
+  "aggregate_type": "condition_report",
+  "description": "开箱/布展/返还等节点的状况检查，建立一份未签署报告；可随后续 FINDING_RECORDED 补充新发现。",
+  "payload_required": ["report_id", "object_id", "loan_id", "phase", "station", "findings"],
+  "payload_fields": {
+    "report_id": "报告编号",
+    "object_id": "藏品编号",
+    "loan_id": "借展编号",
+    "phase": "检查节点：pre_pack / post_unpack / on_display / pre_return / return",
+    "station": "检查站位（地点或关联交接单）",
+    "findings": "发现数组：[{ finding_id, part, description, severity, is_new }]，可为空数组",
+    "previous_report_id": "可选，上一站报告编号"
+  }
+}

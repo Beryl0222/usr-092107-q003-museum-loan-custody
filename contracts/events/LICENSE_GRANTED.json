@@ -1,0 +1,16 @@
+{
+  "event_type": "LICENSE_GRANTED",
+  "aggregate_type": "media_license",
+  "description": "图文视频与展陈使用许可；承借方的展陈轮换与拍摄须落在许可范围内。",
+  "payload_required": ["license_id", "loan_id", "licensor_org", "licensee_org", "object_ids", "allowed_uses", "valid_period"],
+  "payload_fields": {
+    "license_id": "许可编号",
+    "loan_id": "借展编号",
+    "licensor_org": "许可方（出借机构）",
+    "licensee_org": "被许可方（承借机构）",
+    "object_ids": "许可覆盖的藏品数组",
+    "allowed_uses": "允许用途数组：display / photo / video / publication",
+    "valid_period": "{ start, end } 许可有效期",
+    "restrictions": "可选，限制条件数组，如 no_flash / no_touch"
+  }
+}

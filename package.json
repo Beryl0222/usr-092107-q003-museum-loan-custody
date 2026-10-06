@@ -1,10 +1,12 @@
 {
   "name": "museum-loan-custody",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "领域事件基础校验",
+  "description": "跨馆木雕借展护送后端：领域事件契约、追加式存储与业务规则",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "demo": "node scripts/demo.js",
+    "start": "node src/http/server.js"
   }
 }

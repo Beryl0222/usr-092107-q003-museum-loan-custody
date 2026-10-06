@@ -1,0 +1,14 @@
+{
+  "event_type": "EXCEPTION_OPENED",
+  "aggregate_type": "exception_case",
+  "description": "异常立案；未闭合异常对出借方远程可见。",
+  "payload_required": ["exception_id", "loan_id", "kind", "object_ids", "description"],
+  "payload_fields": {
+    "exception_id": "异常编号",
+    "loan_id": "借展编号",
+    "kind": "damage / loss / env / security / emergency_move / other",
+    "object_ids": "涉及藏品数组",
+    "description": "异常描述",
+    "related_risk_ids": "可选，关联风险编号数组"
+  }
+}
