@@ -1,0 +1,87 @@
+{
+  "generated_at": "2026-10-06T03:12:41.912Z",
+  "loan_id": "loan-jx-sd-2026",
+  "event_count": 311,
+  "checks": [
+    {
+      "name": "同一交接单重复上传被幂等忽略",
+      "pass": true,
+      "detail": "忽略原因：idempotency_key"
+    },
+    {
+      "name": "同一传感器数据包重复上传被幂等忽略",
+      "pass": true,
+      "detail": "湿度读数点数：4"
+    },
+    {
+      "name": "Z 与 +08:00 两种写法指向同一瞬时只计一个读数",
+      "pass": true,
+      "detail": "读数点数：1"
+    },
+    {
+      "name": "断网补报数据按采集时刻归位并识别出一次湿度超阈区间",
+      "pass": true,
+      "detail": "{\"start\":\"2026-09-21T02:00:00.000Z\",\"end\":\"2026-09-21T03:00:00.000Z\",\"peak\":64}"
+    },
+    {
+      "name": "重复评估不会重复生成风险单",
+      "pass": true,
+      "detail": "第二次评估新建风险数：0"
+    },
+    {
+      "name": "无文保研判不得撤展",
+      "pass": true,
+      "detail": "以风险研判为由撤展，必须引用“撤出展出”的文保人员决定"
+    },
+    {
+      "name": "撤展研判仅文保人员可提交",
+      "pass": true,
+      "detail": "PHOTOGRAPHER 无权提交 RISK_DECISION"
+    },
+    {
+      "name": "紧急转移双人确认不得为同一人",
+      "pass": true,
+      "detail": "双人确认人不得是紧急转移发起人本人"
+    },
+    {
+      "name": "拆分后逐件归属正确（32–36 在 case-G，28–31 留 case-D）",
+      "pass": true,
+      "detail": "obj-032=case-G, obj-028=case-D"
+    },
+    {
+      "name": "返运重组后 28–36 全部回到 case-D",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "关账时无未闭合异常与待补双人确认",
+      "pass": true,
+      "detail": "{\"anomalies\":0,\"evacuations\":0,\"risks\":0}"
+    },
+    {
+      "name": "损伤回看可定位首见站点、当时箱件、上一段签收与环境曲线",
+      "pass": true,
+      "detail": "{\"stage\":\"开箱检查\",\"case\":\"case-A\",\"handoff\":\"H02\",\"curves\":[\"relative_humidity:4\",\"temperature:1\"]}"
+    },
+    {
+      "name": "前站签署的状况记录未被后续报告改写",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "超媒介/超用途/超期限使用分别被拒",
+      "pass": true,
+      "detail": "MEDIA_TYPE_NOT_LICENSED:已拒绝；MEDIA_PURPOSE_NOT_LICENSED:已拒绝；MEDIA_OUTSIDE_WINDOW:已拒绝"
+    },
+    {
+      "name": "返还数量与登记不符不得关账",
+      "pass": true,
+      "detail": "返还数量 0 与登记数量 1 不一致，不能关账"
+    },
+    {
+      "name": "保管链四段交接按时序完整",
+      "pass": true,
+      "detail": "H01:绩溪县博物馆→安途文物运输 | H02:安途文物运输→山东某馆 | H03:山东某馆→安途文物运输 | H04:安途文物运输→绩溪县博物馆"
+    }
+  ]
+}

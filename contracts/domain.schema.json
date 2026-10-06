@@ -1,56 +1,723 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "跨馆木雕借展护送台领域事件",
+  "$id": "https://jixi-museum.example/loan-custody/domain.schema.json",
+  "title": "跨馆木雕借展护送台领域事件契约",
+  "description": "绩溪县博物馆与承借方之间交换的最小事件约定。记录一经接收，event_id、occurred_at、version 与已签署状况不得原地改写，更正只能追加后继记录。",
   "type": "object",
-  "required": [
-    "event_id",
-    "event_type",
-    "aggregate_type",
-    "aggregate_id",
-    "occurred_at",
-    "version",
-    "summary"
-  ],
+  "required": ["event_id", "event_type", "aggregate_type", "aggregate_id", "occurred_at", "version", "summary", "actor", "payload"],
   "properties": {
-    "event_id": {
+    "event_id": { "type": "string", "minLength": 1 },
+    "event_type": { "$ref": "#/$defs/eventType" },
+    "aggregate_type": { "$ref": "#/$defs/aggregateType" },
+    "aggregate_id": { "type": "string", "minLength": 1 },
+    "occurred_at": {
       "type": "string",
-      "minLength": 1
+      "format": "date-time",
+      "description": "业务发生时间，必须携带时区偏移（Z 或 ±HH:MM），禁止使用无时区的本地时间"
     },
-    "event_type": {
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "系统接收时间。与 occurred_at 相差较大即为断网补报，按 occurred_at 归位，不产生虚假事故"
+    },
+    "version": { "type": "integer", "minimum": 1, "description": "同一聚合内严格递增的版本号" },
+    "summary": { "type": "string", "minLength": 1 },
+    "actor": { "$ref": "#/$defs/actor" },
+    "idempotency_key": {
+      "type": "string",
+      "description": "同一聚合上相同幂等键的重复上传只生效一次（如交接单号）"
+    },
+    "correction_of": {
+      "type": "string",
+      "description": "本记录是对指定前序记录的更正；被更正记录保留不删改"
+    },
+    "payload": { "type": "object" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "eventType": {
       "type": "string",
       "enum": [
+        "LOAN_AGREED",
+        "EXHIBITION_OPENED",
+        "LOAN_CLOSED",
+        "OBJECT_REGISTERED",
+        "CONDITION_REPORTED",
         "OBJECT_PACKED",
+        "OBJECT_UNPACKED",
+        "CASE_RECOMPOSED",
         "CUSTODY_TRANSFERRED",
-        "CONDITION_INSPECTED",
+        "THRESHOLD_SET",
+        "SENSOR_READING",
         "EXCURSION_REPORTED",
+        "RISK_DECISION",
+        "OBJECT_REMOVED_FROM_DISPLAY",
+        "ANOMALY_OPENED",
+        "ANOMALY_NOTE",
+        "ANOMALY_CLOSED",
+        "EVACUATION_STARTED",
+        "EVACUATION_CONFIRMED",
+        "OBJECT_INSTALLED",
+        "SLOT_ROTATED",
+        "MEDIA_GRANTED",
+        "MEDIA_USAGE_LOGGED",
+        "MEDIA_REVOKED",
+        "INSURANCE_BOUND",
+        "CLAIM_FILED",
         "RETURN_ACCEPTED"
       ]
     },
-    "aggregate_type": {
+    "aggregateType": {
       "type": "string",
       "enum": [
+        "loan",
         "collection_object",
         "shipping_case",
         "custody_handoff",
-        "condition_incident"
+        "environment_monitor",
+        "risk_review",
+        "condition_anomaly",
+        "emergency_evacuation",
+        "exhibition_slot",
+        "media_grant",
+        "insurance_policy",
+        "return_acceptance"
       ]
     },
-    "aggregate_id": {
+    "role": {
       "type": "string",
-      "minLength": 1
+      "enum": [
+        "LENDER_CONSERVATOR",
+        "BORROWER_CONSERVATOR",
+        "COURIER",
+        "CARRIER",
+        "REGISTRAR",
+        "CURATOR",
+        "PHOTOGRAPHER",
+        "INSURANCE_AUDITOR",
+        "SYSTEM",
+        "ADMIN"
+      ]
     },
-    "occurred_at": {
+    "actor": {
+      "type": "object",
+      "required": ["person_id", "name", "role", "org"],
+      "properties": {
+        "person_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "$ref": "#/$defs/role" },
+        "org": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "signer": {
+      "type": "object",
+      "required": ["party", "person_id", "name"],
+      "properties": {
+        "party": { "type": "string", "enum": ["lender", "borrower", "carrier", "venue", "insurer"] },
+        "person_id": { "type": "string" },
+        "name": { "type": "string" },
+        "signed_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "stage": {
       "type": "string",
-      "format": "date-time"
+      "enum": [
+        "出库点交",
+        "包装",
+        "装车发运",
+        "运输在途",
+        "抵馆接收",
+        "开箱检查",
+        "布展",
+        "开放展出",
+        "展位轮换",
+        "撤展",
+        "回运",
+        "返还验收"
+      ]
     },
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "summary": {
-      "type": "string",
-      "minLength": 1
+    "conditionFinding": {
+      "type": "object",
+      "required": ["code", "area", "description", "kind"],
+      "properties": {
+        "code": { "type": "string", "description": "损伤/痕迹编号，全借展周期稳定，跨站可引用" },
+        "area": { "type": "string" },
+        "description": { "type": "string" },
+        "kind": { "type": "string", "enum": ["old_repair", "pre_existing", "new_damage"] },
+        "severity": { "type": "string", "enum": ["none", "minor", "moderate", "severe"] },
+        "photo_refs": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
     }
   },
-  "additionalProperties": true
+  "oneOf": [
+    {
+      "properties": {
+        "event_type": { "const": "LOAN_AGREED" },
+        "aggregate_type": { "const": "loan" },
+        "payload": {
+          "type": "object",
+          "required": ["lender", "borrower", "object_count", "period", "venues"],
+          "properties": {
+            "lender": { "type": "string" },
+            "borrower": { "type": "string" },
+            "object_count": { "type": "integer", "minimum": 1 },
+            "period": {
+              "type": "object",
+              "required": ["start", "end"],
+              "properties": {
+                "start": { "type": "string", "format": "date-time" },
+                "end": { "type": "string", "format": "date-time" }
+              }
+            },
+            "venues": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "insurance_policy_id": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "EXHIBITION_OPENED" },
+        "aggregate_type": { "const": "loan" },
+        "payload": {
+          "type": "object",
+          "required": ["venue"],
+          "properties": { "venue": { "type": "string" } }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "LOAN_CLOSED" },
+        "aggregate_type": { "const": "loan" },
+        "payload": {
+          "type": "object",
+          "required": ["returned_object_count"],
+          "properties": { "returned_object_count": { "type": "integer", "minimum": 0 } }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "OBJECT_REGISTERED" },
+        "aggregate_type": { "const": "collection_object" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "accession_no", "name", "material"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "accession_no": { "type": "string", "description": "总登记号/藏品身份" },
+            "name": { "type": "string" },
+            "dynasty": { "type": "string" },
+            "material": { "type": "string" },
+            "dimensions_cm": { "type": "string" },
+            "weight_kg": { "type": "number", "exclusiveMinimum": 0 },
+            "valuation": { "type": "number", "minimum": 0 },
+            "currency": { "type": "string" },
+            "old_repairs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["area", "description"],
+                "properties": {
+                  "area": { "type": "string" },
+                  "description": { "type": "string", "comment": "旧修补痕迹，借出前历史状况" }
+                }
+              }
+            },
+            "photo_refs": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "CONDITION_REPORTED" },
+        "aggregate_type": { "const": "collection_object" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "stage", "signers", "findings"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "stage": { "$ref": "#/$defs/stage" },
+            "signers": { "type": "array", "items": { "$ref": "#/$defs/signer" }, "minItems": 1 },
+            "findings": { "type": "array", "items": { "$ref": "#/$defs/conditionFinding" } },
+            "overall_status": { "type": "string", "enum": ["good", "stable", "concern", "damaged"] }
+          },
+          "description": "状况检查只追加：可引用既往 finding code 补充，禁止修改前一站已签署记录"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "OBJECT_PACKED" },
+        "aggregate_type": { "const": "shipping_case" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "case_no", "package_level", "object_ids"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "case_no": { "type": "string" },
+            "package_level": { "type": "string", "enum": ["外箱", "内匣", "缓冲层"] },
+            "materials": { "type": "array", "items": { "type": "string" } },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "seal_no": { "type": "string" },
+            "packers": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "OBJECT_UNPACKED" },
+        "aggregate_type": { "const": "shipping_case" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "case_no", "object_ids", "stage"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "case_no": { "type": "string" },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "stage": { "$ref": "#/$defs/stage" },
+            "location": { "type": "string" },
+            "unpackers": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "CASE_RECOMPOSED" },
+        "aggregate_type": { "const": "shipping_case" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "case_no", "action", "object_ids"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "case_no": { "type": "string", "description": "拆分或重组后的结果箱号" },
+            "action": { "type": "string", "enum": ["split", "merge", "repack"] },
+            "source_case_nos": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "seal_no": { "type": "string" },
+            "note": { "type": "string" }
+          },
+          "description": "箱件拆分与重新组合仍逐件挂到具体藏品，箱谱系可回放"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "CUSTODY_TRANSFERRED" },
+        "aggregate_type": { "const": "custody_handoff" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "handoff_no", "stage", "from_party", "to_party", "signers"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "handoff_no": { "type": "string", "description": "交接单号，建议同时放入 idempotency_key 防重复上传" },
+            "stage": { "$ref": "#/$defs/stage" },
+            "location": { "type": "string" },
+            "from_party": { "type": "string" },
+            "to_party": { "type": "string" },
+            "case_nos": { "type": "array", "items": { "type": "string" } },
+            "object_ids": { "type": "array", "items": { "type": "string" } },
+            "seal_nos": { "type": "array", "items": { "type": "string" } },
+            "signers": { "type": "array", "items": { "$ref": "#/$defs/signer" }, "minItems": 1 },
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "THRESHOLD_SET" },
+        "aggregate_type": { "const": "environment_monitor" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "scope", "metric", "unit"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "scope": {
+              "type": "object",
+              "required": ["kind", "ref"],
+              "properties": {
+                "kind": { "type": "string", "enum": ["zone", "object", "case"] },
+                "ref": { "type": "string" }
+              }
+            },
+            "metric": { "type": "string", "enum": ["temperature", "relative_humidity", "light", "uv"] },
+            "unit": { "type": "string" },
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "SENSOR_READING" },
+        "aggregate_type": { "const": "environment_monitor" },
+        "payload": {
+          "type": "object",
+          "required": ["sensor_id", "readings"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "sensor_id": { "type": "string" },
+            "readings": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["metric", "value", "observed_at"],
+                "properties": {
+                  "metric": { "type": "string" },
+                  "value": { "type": "number" },
+                  "unit": { "type": "string" },
+                  "observed_at": { "type": "string", "format": "date-time", "description": "测点采集时刻，必须带偏移" }
+                }
+              }
+            }
+          },
+          "description": "断网补报时 recorded_at 晚于 observed_at；按 observed_at 归位，同一测点同一时刻去重"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "EXCURSION_REPORTED" },
+        "aggregate_type": { "const": "risk_review" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "monitor_id", "metric", "status"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "monitor_id": { "type": "string" },
+            "metric": { "type": "string" },
+            "threshold": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" }
+              }
+            },
+            "first_observed_at": { "type": "string", "format": "date-time" },
+            "last_observed_at": { "type": "string", "format": "date-time" },
+            "peak_value": { "type": "number" },
+            "reading_event_ids": { "type": "array", "items": { "type": "string" } },
+            "status": { "type": "string", "enum": ["pending_review"] }
+          },
+          "description": "超阈值只生成待研判风险，不等于事故，不自动撤展"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "RISK_DECISION" },
+        "aggregate_type": { "const": "risk_review" },
+        "payload": {
+          "type": "object",
+          "required": ["decision", "decided_by", "rationale"],
+          "properties": {
+            "decision": { "type": "string", "enum": ["keep_monitoring", "remove_from_display", "close_no_action"] },
+            "decided_by": {
+              "type": "object",
+              "required": ["person_id", "name", "role", "org"],
+              "properties": {
+                "person_id": { "type": "string" },
+                "name": { "type": "string" },
+                "role": { "type": "string", "enum": ["LENDER_CONSERVATOR", "BORROWER_CONSERVATOR"] },
+                "org": { "type": "string" }
+              }
+            },
+            "rationale": { "type": "string" }
+          },
+          "description": "是否撤展只能由有权限的文保人员决定"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "OBJECT_REMOVED_FROM_DISPLAY" },
+        "aggregate_type": { "const": "collection_object" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "slot_id", "reason"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "slot_id": { "type": "string" },
+            "reason": { "type": "string", "enum": ["risk_decision", "rotation", "normal_close", "emergency"] },
+            "risk_review_id": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "ANOMALY_OPENED" },
+        "aggregate_type": { "const": "condition_anomaly" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "title", "category", "severity"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "title": { "type": "string" },
+            "category": { "type": "string", "enum": ["damage", "packing", "environmental", "seal", "documentation", "other"] },
+            "severity": { "type": "string", "enum": ["minor", "moderate", "severe"] },
+            "object_id": { "type": "string" },
+            "case_no": { "type": "string" },
+            "handoff_no": { "type": "string" },
+            "risk_review_id": { "type": "string" },
+            "description": { "type": "string" },
+            "evidence_refs": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "ANOMALY_NOTE" },
+        "aggregate_type": { "const": "condition_anomaly" },
+        "payload": {
+          "type": "object",
+          "required": ["note"],
+          "properties": {
+            "note": { "type": "string" },
+            "action_taken": { "type": "string" },
+            "evidence_refs": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "ANOMALY_CLOSED" },
+        "aggregate_type": { "const": "condition_anomaly" },
+        "payload": {
+          "type": "object",
+          "required": ["resolution", "signers"],
+          "properties": {
+            "resolution": { "type": "string" },
+            "signers": { "type": "array", "items": { "$ref": "#/$defs/signer" }, "minItems": 1 }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "EVACUATION_STARTED" },
+        "aggregate_type": { "const": "emergency_evacuation" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "object_ids", "from_location", "immediate_action"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "case_nos": { "type": "array", "items": { "type": "string" } },
+            "from_location": { "type": "string" },
+            "reason": { "type": "string" },
+            "immediate_action": { "type": "string", "description": "先保护实物的先期处置" }
+          },
+          "description": "紧急转移先保护实物，允许先发起、后补双人确认"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "EVACUATION_CONFIRMED" },
+        "aggregate_type": { "const": "emergency_evacuation" },
+        "payload": {
+          "type": "object",
+          "required": ["second_person", "to_location"],
+          "properties": {
+            "second_person": {
+              "type": "object",
+              "required": ["person_id", "name", "role", "org"],
+              "properties": {
+                "person_id": { "type": "string" },
+                "name": { "type": "string" },
+                "role": { "$ref": "#/$defs/role" },
+                "org": { "type": "string" }
+              }
+            },
+            "to_location": { "type": "string" },
+            "condition_event_ids": { "type": "array", "items": { "type": "string" } }
+          },
+          "description": "补齐双人确认；确认人不得是发起人本人"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "OBJECT_INSTALLED" },
+        "aggregate_type": { "const": "exhibition_slot" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "slot_no", "venue", "object_ids"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "slot_no": { "type": "string" },
+            "venue": { "type": "string" },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "position_notes": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "SLOT_ROTATED" },
+        "aggregate_type": { "const": "exhibition_slot" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "slot_no"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "slot_no": { "type": "string" },
+            "removed_object_ids": { "type": "array", "items": { "type": "string" } },
+            "installed_object_ids": { "type": "array", "items": { "type": "string" } },
+            "reason": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "MEDIA_GRANTED" },
+        "aggregate_type": { "const": "media_grant" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "object_ids", "media_types", "purposes", "valid_from", "valid_to", "granted_by"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "media_types": { "type": "array", "items": { "type": "string", "enum": ["photo", "video", "graphic"] }, "minItems": 1 },
+            "purposes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "channels": { "type": "array", "items": { "type": "string" } },
+            "restrictions": { "type": "string" },
+            "valid_from": { "type": "string", "format": "date-time" },
+            "valid_to": { "type": "string", "format": "date-time" },
+            "granted_by": { "type": "string" }
+          },
+          "description": "图文视频使用许可：承借方仅可在许可范围与期限内安排拍摄使用"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "MEDIA_USAGE_LOGGED" },
+        "aggregate_type": { "const": "media_grant" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "object_ids", "media_type", "purpose", "used_at", "used_by"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "media_type": { "type": "string", "enum": ["photo", "video", "graphic"] },
+            "purpose": { "type": "string" },
+            "channel": { "type": "string" },
+            "used_at": { "type": "string", "format": "date-time" },
+            "used_by": { "type": "string" },
+            "ref": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "MEDIA_REVOKED" },
+        "aggregate_type": { "const": "media_grant" },
+        "payload": {
+          "type": "object",
+          "required": ["reason"],
+          "properties": { "reason": { "type": "string" } }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "INSURANCE_BOUND" },
+        "aggregate_type": { "const": "insurance_policy" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "policy_no", "insurer", "object_ids", "coverage_total", "currency", "valid_from", "valid_to"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "policy_no": { "type": "string" },
+            "insurer": { "type": "string" },
+            "object_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "coverage_total": { "type": "number", "minimum": 0 },
+            "currency": { "type": "string" },
+            "perils": { "type": "array", "items": { "type": "string" } },
+            "valid_from": { "type": "string", "format": "date-time" },
+            "valid_to": { "type": "string", "format": "date-time" }
+          },
+          "description": "保险范围（钉住到具体藏品与保障期间），保额为商业敏感信息"
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "CLAIM_FILED" },
+        "aggregate_type": { "const": "insurance_policy" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "claim_no", "anomaly_id", "object_id", "amount"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "claim_no": { "type": "string" },
+            "anomaly_id": { "type": "string" },
+            "object_id": { "type": "string" },
+            "amount": { "type": "number", "minimum": 0 },
+            "currency": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "event_type": { "const": "RETURN_ACCEPTED" },
+        "aggregate_type": { "const": "return_acceptance" },
+        "payload": {
+          "type": "object",
+          "required": ["loan_id", "acceptance_no", "object_results", "signers"],
+          "properties": {
+            "loan_id": { "type": "string" },
+            "acceptance_no": { "type": "string" },
+            "object_results": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["object_id", "accepted", "condition_vs_baseline"],
+                "properties": {
+                  "object_id": { "type": "string" },
+                  "accepted": { "type": "boolean" },
+                  "condition_vs_baseline": { "type": "string", "enum": ["match", "pre_existing_only", "new_discrepancy"] },
+                  "finding_summary": { "type": "string" }
+                }
+              }
+            },
+            "acknowledged_discrepancies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["object_id", "anomaly_id", "note"],
+                "properties": {
+                  "object_id": { "type": "string" },
+                  "anomaly_id": { "type": "string" },
+                  "note": { "type": "string" }
+                }
+              }
+            },
+            "signers": { "type": "array", "items": { "$ref": "#/$defs/signer" }, "minItems": 2 }
+          },
+          "description": "返还验收；凡 new_discrepancy 必须在 acknowledged_discrepancies 中逐条确认"
+        }
+      }
+    }
+  ]
 }

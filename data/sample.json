@@ -1,9 +1,25 @@
 {
-  "event_id": "sample-003-001",
-  "event_type": "OBJECT_PACKED",
-  "aggregate_type": "collection_object",
-  "aggregate_id": "museum_loan_custody-001",
-  "occurred_at": "2026-09-20T18:00:00+08:00",
+  "event_id": "sample-001",
+  "event_type": "LOAN_AGREED",
+  "aggregate_type": "loan",
+  "aggregate_id": "loan-sample-000",
+  "occurred_at": "2026-09-15T10:00:00+08:00",
   "version": 1,
-  "summary": "登记跨馆木雕借展护送台的首条领域记录"
+  "summary": "样例：绩溪县博物馆向承借方借出一件徽州木雕的借展协议",
+  "actor": {
+    "person_id": "p-dongji",
+    "name": "董籍",
+    "role": "REGISTRAR",
+    "org": "绩溪县博物馆"
+  },
+  "payload": {
+    "lender": "绩溪县博物馆",
+    "borrower": "山东某馆",
+    "object_count": 1,
+    "period": {
+      "start": "2026-09-26T09:00:00+08:00",
+      "end": "2026-10-20T17:00:00+08:00"
+    },
+    "venues": ["山东某馆三层七号展厅"]
+  }
 }
